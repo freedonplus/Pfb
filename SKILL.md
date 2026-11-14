@@ -1,6 +1,6 @@
 ---
 name: prod-frontend-blueprint
-description: Plan, design, audit, or review a production-grade frontend project (website / H5 / mobile app / mini-program / desktop). Use when the user wants to build a new frontend from scratch, scaffold a project structure, or audit an existing frontend against production standards. Covers platform & stack selection (Vue/React/TS/uni-app x/Flutter/Electron/Tauri/微信小程序), component libraries, directory skeleton, build & bundle optimization, resource loading, runtime performance, request-layer hardening, memory leaks, security, monitoring, and CI/CD. Trigger phrases include 生产级前端 / 前端方案 / 前端架构 / 前端脚手架 / 文件结构 / 上线前检查 / 前端审核 / 前端优化清单 / 性能优化. Three routes — greenfield idea gets a multi-round interview plus a blueprint with directory skeleton; existing project without baseline gets a gap check (suggestions only, no code changes); project built by this skill gets a full audit report (结论先行). Frontend only, never writes backend code. 中文摘要：生产级前端方案规划与审核助手，新建出方案书+目录骨架、已有项目做差距检查、本技能产出的项目做审核报告，只做前端不碰后端。
+description: Plan, design, audit, or review a production-grade frontend project (website / H5 / mobile app / mini-program / desktop). Use when the user wants to build a new frontend from scratch, scaffold a project structure, or audit an existing frontend against production standards. Covers platform & stack selection (Vue/React/TS/uni-app x/Flutter/Electron/Tauri/微信小程序), component libraries, directory skeleton, build & bundle optimization, resource loading, runtime performance, request-layer hardening, memory leaks, security, monitoring, and CI/CD. Trigger phrases include 生产级前端 / 前端方案 / 前端架构 / 前端脚手架 / 文件结构 / 上线前检查 / 前端审核 / 前端优化清单 / 性能优化 / 大厂级前端 / AI 前端方案. Decisions are grounded in big-tech interview fundamentals (closure / event loop / Proxy reactivity / Fiber / HTTP 1.1-3 / virtual list / SSE & MCP AI frontend) via a knowledge-system mapping; UI starts from design-style selection (StyleKit catalog mapped to project types) then a three-tier component-reuse strategy (mature library / self-built / uiverse-style adapted components) with MDN-aligned modern CSS and animation performance red-lines. Three routes — greenfield idea gets a multi-round interview plus a blueprint with directory skeleton; existing project without baseline gets a gap check (suggestions only, no code changes); project built by this skill gets a full audit report (结论先行). Frontend only, never writes backend code. 中文摘要：生产级前端方案规划与审核助手，新建出方案书+目录骨架、已有项目做差距检查、本技能产出的项目做审核报告，只做前端不碰后端。
 agent_created: true
 ---
 
@@ -17,6 +17,8 @@ agent_created: true
 - **审核结论先行**：审核/差距报告第一段就是结论（通过率、阻断项数、是否可上线），随后才展开明细。
 - **前后端边界是硬规则**：只交付前端侧内容（目录骨架、状态与数据流、请求层封装、构建与部署策略）。接口字段、鉴权逻辑、数据库等后端设计只记录为「后端侧需求」，不展开实现。
 - **平台特定内容**：先确定平台与框架，再加载 `references/stacks/` 下对应文件；依赖清单、版本匹配、平台陷阱必须出自对应文件。
+- **原理支撑（大厂架构师标准）**：方案书关键决策（请求层、缓存、渲染、长列表、动效、工程化、AI 流式）须落到原理层——引用 `references/knowledge-system.md` 的考点映射（闭包/事件循环/Proxy 响应式/Fiber/HTTP 演进/虚拟列表/SSE 与 MCP 等），写清「为什么这样选、失败场景是什么」，不做清单复读机。
+- **UI 风格与复用分层**：涉及风格选型、组件库选型、自研视觉组件或设计系统时，按 `references/ui-patterns.md` 执行——风格从其 §二 StyleKit 映射表按项目类型选（主风格只 1 个）；组件库从 `references/component-libraries.md` 目录与默认推荐矩阵选（须过活跃度三门槛：star/大厂背书、近 6 个月发版、issue 响应）；组件按 L1 成熟库 / L2 业务组件 / L3 uiverse 式抄改组件三层决策，抄改组件必须过准入门槛；动效必须过其 §四 性能红线。
 - **审核不代改**：审核模式只出报告与建议，不直接改代码；用户明确要求整改后才动手，且逐项说明影响面。
 
 ## 场景判定（任何请求的第一步）
@@ -49,10 +51,12 @@ agent_created: true
 
 ### 阶段 2 · 撰写方案
 1. 加载平台对应的 stacks 参考（见文末索引）。
-2. 按 `references/plan-template.md` 的章节骨架撰写；技术决策必须给出「选择 + 理由 + 否决项」三件套。
-3. 「目录结构骨架」章节为必写项：给出可直接落地的目录树 + 每层职责说明。
-4. 「上线检查清单」章节按 P0/P1/P2 标注，与 `references/production-checklist.md` 对齐；C 端高流量项目并入 `references/advanced-checklist.md` 的相关项。
-5. 涉及缓存、懒加载、请求防重、预加载策略的结论必须与 `references/decision-matrix.md` 一致；偏离时显式说明理由。
+2. 原理表述对照 `references/knowledge-system.md`（请求层/缓存/长列表/事件循环等章节的「30 秒原理 + 蓝图落点」），保证决策有原理依据；项目含 AI 对话/大模型调用/流式输出时必读其 §七，并使用模板的「AI 前端集成方案」章节。
+3. 含 UI 选型、风格选型（StyleKit 映射）、自研组件、设计系统或动效设计时加载 `references/ui-patterns.md`，产出「UI 组件复用与设计系统」章节（风格选择也写「选择 + 理由 + 否决项」）；涉及组件库选型时同时加载 `references/component-libraries.md`（目录 + 默认推荐矩阵 + 活跃度门槛），设计资源（图标/动画库/模板）按需引用其 §三入口总表。
+4. 按 `references/plan-template.md` 的章节骨架撰写；技术决策必须给出「选择 + 理由 + 否决项」三件套。
+5. 「目录结构骨架」章节为必写项：给出可直接落地的目录树 + 每层职责说明。
+6. 「上线检查清单」章节按 P0/P1/P2 标注，与 `references/production-checklist.md` 对齐；C 端高流量项目并入 `references/advanced-checklist.md` 的相关项。
+7. 涉及缓存、懒加载、请求防重、预加载策略的结论必须与 `references/decision-matrix.md` 一致；偏离时显式说明理由。
 
 ### 阶段 3 · 检阅与迭代
 - 方案落盘为 Markdown 文件并 present_files，不要只贴在对话里。
@@ -81,6 +85,9 @@ agent_created: true
 | --- | --- |
 | `references/interview.md` | 阶段 1 全程 |
 | `references/decision-matrix.md` | 阶段 1 推导结论、阶段 2 撰写缓存/懒加载/请求层/预加载章节时 |
+| `references/knowledge-system.md` | 阶段 2 撰写原理性决策（请求层/缓存/渲染/长列表/工程化/动效）与 AI 前端项目（§七必读）；阶段 4 审核时作为原理判定依据；按需可按板块标题 grep |
+| `references/ui-patterns.md` | 涉及设计风格选型（StyleKit 151 风格映射）、组件库选型、自研视觉组件（uiverse 式抄改）、设计系统、现代 CSS 特性与动效的方案撰写与审核 |
+| `references/component-libraries.md` | 阶段 1 第 3 轮组件库提问、阶段 2 技术栈章节组件库选型、审核时核验选型活跃度；含按端与框架的组件库目录、默认推荐矩阵、designeer.org 资源入口总表与动画库红线 |
 | `references/production-checklist.md` | 阶段 2 查漏、产出 P0/P1/P2 上线清单时（主清单，所有项目必过） |
 | `references/advanced-checklist.md` | C 端高流量 / 微前端 / SSR 项目的高阶增强清单 |
 | `references/audit-checklist.md` | 场景 A 差距检查、阶段 4 审核全程（结论先行报告模板） |

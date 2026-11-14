@@ -58,27 +58,36 @@
 
 ---
 
-## 第 3 轮 · 组件库与样式方案（剪枝：选「纯定制样式」则只问 CSS 工程化）
+## 第 3 轮 · 组件库与样式方案（剪枝：后台纯用成熟库时跳过第 2 问；纯定制样式只问样式工程化）
+> 第 2 问「视觉组件复用策略」为条件题，仅 C 端 / 品牌官网 / 开发者产品时提出，不计入每轮 4 问上限。
 
-1. **UI 组件库**（按框架给选项）
+1. **UI 组件库**（按框架给选项；完整目录、默认推荐矩阵与活跃度三门槛见 `component-libraries.md`——star ≥ 3k 或大厂背书、近 6 个月有发版、issue 响应正常）
    - Vue 3：Element Plus（推荐，后台标配）/ Naive UI / Ant Design Vue / Vant（移动 H5）
-   - React：Ant Design（推荐）/ Material UI / shadcn-ui + Tailwind
+   - React：Ant Design（推荐）/ MUI / Semi Design / shadcn-ui + Tailwind
    - uni-app x：自研样式（推荐，组件库支持有限）/ uni-ui x
-   - 小程序：Vant Weapp / TDesign MiniProgram
+   - 小程序：Vant Weapp（推荐）/ TDesign 小程序版 / Lin UI
 
-2. **样式工程化**
+2. **视觉组件复用策略**（C 端 / 品牌官网 / 开发者产品时问；后台纯用成熟库可跳过）
+   - 成熟库为主 + 少量 uiverse 式自研视觉组件（推荐）：重交互用库，按钮/开关/加载动画等轻交互高视觉组件抄改 uiverse.io / shadcn 生态，过 `ui-patterns.md` §一准入门槛收编进设计系统
+   - 完全自研设计系统：有设计师与组件团队
+   - 全部用成熟库默认样式：最快但无差异化
+
+   **设计风格**（与上问同轮或紧随其后，按项目类型从 `ui-patterns.md` §二 StyleKit 映射表给 3~4 个候选，如后台 → 企业简洁风/Notion 风/暗黑模式，SaaS 官网 → 现代渐变风/柔和界面风/Apple 风；用户选定后写入方案书「选择 + 理由 + 否决项」）
+
+3. **样式工程化**
    - CSS 预处理器 + scoped/Modules（推荐）：Sass/Less + 组件级隔离
    - Tailwind CSS：原子化，适合定制风格与快速迭代
    - CSS-in-JS：React 生态可选（styled-components / emotion）
+   - 现代 CSS 原生方案：@layer 级联治理 + 设计 token + 容器查询（项目无旧浏览器包袱时推荐与上项组合，见 `ui-patterns.md` §五）
 
-3. **图标与字体**
+4. **图标与字体**
    - SVG 图标库（推荐：iconify / 自托管 SVG sprite）
    - iconfont 字体图标
    - 需要自定义字体（品牌字体，注意字体子集化）
 
-4. **主题与暗黑模式**
+5. **主题与暗黑模式**
    - 不需要（推荐，按默认浅色）
-   - 需要暗黑模式 / 主题切换（CSS 变量方案）
+   - 需要暗黑模式 / 主题切换（CSS 变量 token 方案，`light-dark()` 增强可选）
 
 ---
 

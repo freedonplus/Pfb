@@ -107,3 +107,32 @@
 | 内部工具 | console + 后端日志即可（可不做前端监控） |
 | 公网 C 端 | JS 异常捕获（error/unhandledrejection）+ 资源加载失败 + Web Vitals 上报，错误率阈值告警 |
 | 任何项目 | 全局错误兜底页 + 接口异常统一提示是 P1 |
+
+## 12. UI 组件复用与风格选型推导（细则见 ui-patterns.md；组件库目录与默认推荐矩阵见 component-libraries.md）
+
+| 信号 | 结论 |
+| --- | --- |
+| 组件库选型 | 端 + 框架匹配 → 活跃度三门槛（star ≥ 3k 或大厂背书 / 近 6 个月发版 / issue 响应）→ 风格匹配；默认推荐矩阵见 component-libraries.md §二（PC 后台 Vue3 → Element Plus；PC 后台 React → Ant Design；移动 H5 Vue → Vant；小程序 → Vant Weapp；金融移动 → Mand Mobile） |
+| 库默认气质 ≠ 方案主风格 | 优先换库，不做第三方主题深改（深改主题的维护成本高于换库） |
+| 后台管理 / 内部系统 | Corporate Clean / Notion 风 / Dark Mode 任选其一；L1 成熟组件库 + 默认样式，不引入自研视觉组件 |
+| Dashboard / 数据工具 | macOS Vibrancy / Dark Mode；glass 预算集中给图表卡片 |
+| SaaS / B2B 官网、开发者产品 | Modern Gradient / Soft UI / Stripe 风 / Apple 风；L1 底座 + L3 uiverse 式自研视觉组件 ≤ 20 个，全部 token 化收编 |
+| C 端品牌 / 活动页 | Neo-Brutalist / Geometric Bold / Modern Gradient；动效只允许 transform/opacity；glass ≤ 1 层；无限动画出视口必须暂停 |
+| 文档 / 知识库 | Notion 风 / Editorial；长文排版优先于视觉装饰 |
+| 重动效需求（活动页/官网首屏） | 动效只允许 transform/opacity；glass ≤ 1 层；无限动画出视口必须暂停 |
+| 风格混搭 | 主风格只 1 个，辅助元素 ≤ 2 种；重装饰风格（粘土拟态/蒸汽波/像素）禁止用于后台 |
+| Neumorphism | 慎选：低对比可及性弱点，只用于卡片不用于表单；表单控件必须有非阴影状态提示 |
+| 暗黑模式 | CSS 变量 token 唯一方案；组件库主题与自研 token 用同一开关 |
+| 现代浏览器基线（无 IE/旧内核包袱） | 可用 @layer / 容器查询 / :has() / clamp()；@supports 渐进增强兜底 |
+| 存量旧浏览器兼容 | 现代特性仅作增强层，基础体验不依赖新特性 |
+
+## 13. AI 前端推导（原理见 knowledge-system.md §七）
+
+| 场景 | 结论 |
+| --- | --- |
+| LLM 对话 / 流式生成 | fetch + ReadableStream（兼容主流网关），不用 SSE 库也不自建 WebSocket |
+| 流式 markdown 渲染 | 按段落分块增量解析 + 消息块 memo；禁止每 token 全文 re-parse |
+| 会话中断 | AbortController；中断后状态复位、缓冲清空、按钮恢复 |
+| 超长对话历史 | 消息区虚拟列表渲染；上下文裁剪策略写入「后端侧需求」 |
+| 工具调用（Agent/MCP） | UI 状态机：生成中/等待工具/失败/中断四态；tool call 卡片展示名称+参数+结果 |
+| 断线/失败 | 自动重连仅用户可见开关触发；失败保留已生成内容 + 重试按钮，不整段清空 |

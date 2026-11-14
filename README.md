@@ -46,7 +46,7 @@ A 与 B 的分界是**有没有基线**：有基线才能说「你没按方案�
 
 1. **平台与终端** —— 网站 / H5 / 原生 App / 小程序 / 桌面端，是否要 PC 与移动双适配
 2. **语言与框架** —— JS 还是 TS；Vue / React / uni-app x / Flutter / Electron / Tauri
-3. **组件库与样式** —— UI 库选型、是否允许自定义设计系统、CSS 方案与隔离方式
+3. **组件库与样式** —— UI 库选型（按 `component-libraries.md` 目录与活跃度三门槛）、设计风格选型（StyleKit 映射，按项目类型给 3~4 个候选）、是否允许 uiverse 式自研视觉组件、CSS 方案与现代 CSS 特性
 4. **规模与流量模型** —— 内部系统还是公网 C 端、日活量级、是否有大促峰值
 5. **渲染与数据层** —— CSR / SSR / SSG、状态管理、请求层与缓存策略
 6. **工程化与发布** —— 构建工具、包管理、CI、部署形态、灰度与回滚
@@ -63,9 +63,24 @@ A 与 B 的分界是**有没有基线**：有基线才能说「你没按方案�
 | --- | --- | --- |
 | **主清单** | `references/production-checklist.md` | 所有生产前端必做：构建与体积、资源加载、运行时渲染、请求层防错、内存泄漏、安全、监控、工程化 |
 | **高阶清单** | `references/advanced-checklist.md` | 仅公网 C 端高流量：CLS/LCP 专项、预加载精细化管控、HTTP/2-3、微前端、SSR 懒注水、弱网与低端机压测、SRI |
-| **审核清单** | `references/audit-checklist.md` | 场景 A/B：G1–G9 通用组 + 平台专属组（Vue3 / React / uni-app x / 小程序 / 桌面），含结论先行报告模板 |
+| **审核清单** | `references/audit-checklist.md` | 场景 A/B：G1–G10 通用组（含 UI/动效）+ P-AI 流式前端组 + 平台专属组（Vue3 / React / uni-app x / 小程序 / 桌面），含结论先行报告模板 |
 
 清单项均带 **P0 / P1 / P2** 优先级，P0 是上线阻断项（防重复提交、请求取消、token 无感刷新、定时器与实例销毁、index.html 不强缓存、首屏体积、HTTPS 与基础 XSS 防护、异常监控）。
+
+---
+
+## 知识底座与 UI 体系（v1.1 新增）
+
+方案不是清单复读——每个关键决策都能落到原理层，UI 每层都有目录可查：
+
+| 维度 | 文件 | 覆盖内容 |
+| --- | --- | --- |
+| **大厂考点映射** | `references/knowledge-system.md` | 闭包/事件循环/原型链、Vue2 defineProperty vs Vue3 Proxy、React Hooks/Fiber、HTTP 1.1-3 演进、虚拟列表、Web Vitals 等高频考点 → 按「30 秒原理 + 蓝图落点 + 审核证据」映射成架构决策；附防抖节流等手写基线 |
+| **AI 前端** | 同上 §七 + 模板第 7 章 | SSE vs WebSocket vs fetch 流式选型、增量 markdown 渲染、Agent/MCP 工具调用 UI 状态机、长会话虚拟列表、中断与断线兜底 |
+| **风格选型** | `references/ui-patterns.md` §二 | StyleKit 151 种设计风格按项目类型映射（后台 → 企业简洁风/Notion 风，SaaS → 现代渐变风…），主风格只 1 个，混搭红线与可及性注意 |
+| **组件复用三层** | 同上 §一/§三 | L1 成熟库（重交互不自研）/ L2 业务组件 / L3 uiverse 式抄改视觉组件（四条准入门槛：零重依赖、token 化、性能达标、无障碍底线） |
+| **现代 CSS** | 同上 §五 | @layer / 容器查询 / :has() / subgrid / clamp() / View Transitions 等 14 项，全部带使用条件与 @supports 降级；动效性能红线（仅 transform/opacity、glass ≤ 1 层） |
+| **组件库目录** | `references/component-libraries.md` | 60+ 组件库按端与框架分类（star 参考值）、默认推荐矩阵、活跃度三门槛（star≥3k 或大厂背书 / 近 6 个月发版 / issue 响应）、designeer.org 资源入口、动画库与模板站使用红线 |
 
 ---
 
@@ -92,6 +107,8 @@ A 与 B 的分界是**有没有基线**：有基线才能说「你没按方案�
 - 技术选型与否决项（为什么不是另一套）
 - **目录结构骨架**（目录树 + 每层职责，可直接落地）
 - 数据流与状态管理、请求层与错误处理策略
+- UI 组件复用与设计系统（主风格选型、三层复用决策、token 层、抄改组件清单）
+- AI 前端集成方案（仅 AI 项目：流式渲染、会话状态机、工具调用展示、上下文管理）
 - 构建与产物体积预算、资源加载与缓存策略
 - 性能目标（首屏 / 交互 / 包体）与对应手段
 - 安全基线、监控与埋点、CI/CD 与发布回滚
@@ -133,11 +150,14 @@ ProdFrontendBlueprint/
 ├── LICENSE                          # Apache-2.0
 └── references/
     ├── interview.md                 # 分轮提问脚本（6 轮）
-    ├── decision-matrix.md           # 选择 → 结论推导规则（11 组）
-    ├── plan-template.md             # 方案书模板（含目录结构骨架章节）
+    ├── decision-matrix.md           # 选择 → 结论推导规则（13 组）
+    ├── knowledge-system.md          # 大厂高频考点 → 架构决策映射（含 AI 前端 §七）
+    ├── ui-patterns.md               # 风格选型（StyleKit）+ 组件复用三层 + 现代 CSS
+    ├── component-libraries.md       # 组件库目录 + 设计资源入口 + 动画库红线
+    ├── plan-template.md             # 方案书模板（18 章，含 UI 与 AI 前端章节）
     ├── production-checklist.md      # 主清单（十大板块，P0/P1/P2）
     ├── advanced-checklist.md        # 高阶清单（C 端大流量专用）
-    ├── audit-checklist.md           # 审核清单 + 结论先行报告模板
+    ├── audit-checklist.md           # 审核清单（G1–G10 + P-AI）+ 结论先行报告模板
     └── stacks/                      # vue3 / react / uniapp-x / miniprogram / desktop
 ```
 

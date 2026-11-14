@@ -62,6 +62,22 @@
 - 发布带版本号
 - 有预发布环境；生产不可直接改
 
+### G10 UI 组件复用与动效（仅含自研视觉组件/重动效的项目适用）
+- 页面实际风格与方案书选定的主风格一致，混搭辅助元素 ≤ 2 种（对照 ui-patterns.md §二映射表）
+- 抄改组件（uiverse 等来源）色值已 token 化，无硬编码色号
+- glass（backdrop-filter）层数 ≤ 1，无嵌套；低端机有降级
+- 无限循环动画出视口暂停；`prefers-reduced-motion` 全局降级生效
+- 动画属性仅 transform / opacity（抽查 hover/过渡 CSS）
+- `will-change` 非常驻
+- 弹窗处理 `overscroll-behavior`（滚动穿透）
+
+### P-AI 流式 AI 前端（仅 AI 对话/大模型调用项目适用）
+- 流式请求有 AbortController 取消；中断后状态复位、缓冲清空
+- 流式 markdown 分块增量解析，无每 token 全文 re-parse
+- 工具调用（Agent/MCP）有 UI 状态机与失败反馈
+- 超长对话消息区用虚拟列表
+- 断线/失败保留已生成内容，不整段清空
+
 ## Part 2 · 平台组（按项目平台选用）
 
 ### P-Vue3
