@@ -114,7 +114,7 @@
 | --- | --- |
 | 组件库选型 | 端 + 框架匹配 → 活跃度三门槛（star ≥ 3k 或大厂背书 / 近 6 个月发版 / issue 响应）→ 风格匹配；默认推荐矩阵见 component-libraries.md §二（PC 后台 Vue3 → Element Plus；PC 后台 React → Ant Design；移动 H5 Vue → Vant；小程序 → Vant Weapp；金融移动 → Mand Mobile） |
 | 库默认气质 ≠ 方案主风格 | 优先换库，不做第三方主题深改（深改主题的维护成本高于换库） |
-| 后台管理 / 内部系统 | Corporate Clean / Notion 风 / Dark Mode 任选其一；L1 成熟组件库 + 默认样式，不引入自研视觉组件 |
+| 后台管理 / 内部系统 | **默认倾向**：Corporate Clean / Notion 风 / Dark Mode 任选其一，L1 成熟组件库为主。**若用户要求品牌化、效率型微交互或数据可视化（阶段 5 动效密度选"标准/丰富"，阶段 4 选看板/大屏），则按需引入 L3 视觉组件、动画库与图表库——不得以"这是后台"为由拒绝，也不得自行加码。表格能力按 D 组选型，与风格无关** |
 | Dashboard / 数据工具 | macOS Vibrancy / Dark Mode；glass 预算集中给图表卡片 |
 | SaaS / B2B 官网、开发者产品 | Modern Gradient / Soft UI / Stripe 风 / Apple 风；L1 底座 + L3 uiverse 式自研视觉组件 ≤ 20 个，全部 token 化收编 |
 | C 端品牌 / 活动页 | Neo-Brutalist / Geometric Bold / Modern Gradient；动效只允许 transform/opacity；glass ≤ 1 层；无限动画出视口必须暂停 |
@@ -136,3 +136,33 @@
 | 超长对话历史 | 消息区虚拟列表渲染；上下文裁剪策略写入「后端侧需求」 |
 | 工具调用（Agent/MCP） | UI 状态机：生成中/等待工具/失败/中断四态；tool call 卡片展示名称+参数+结果 |
 | 断线/失败 | 自动重连仅用户可见开关触发；失败保留已生成内容 + 重试按钮，不整段清空 |
+
+## 14. 能力池选型推导（细则与候选见 library-catalog.md）
+
+**总则**：项目类型只影响"默认倾向"，不影响"是否询问"。以下推导只在用户未明确指定时生效；用户点名即按四道闸（体积/许可/活性/平台）评估后采用，标注「用户指定」。
+
+| 需求信号 | 推导结论 | 否决项 |
+| --- | --- | --- |
+| 只需展示 3D 模型（转看、配置器无自定义场景） | `<model-viewer>`（≈90KB） | Three.js（体积大一个数量级，无必要） |
+| 需自建 3D 场景 / 材质 / 相机交互 | Three.js（按需 import + 动态加载 + 静态图降级） | model-viewer（能力不足）、Babylon（更重） |
+| 2D 批量精灵 / 粒子 / 2D 游戏 | PixiJS | Three.js（3D 引擎做 2D 浪费） |
+| 仅 hover / 状态过渡 / 简单入场 | 纯 CSS（原生，0 字节） | 任何动画库 |
+| 列表增删 / 展开收起 | AutoAnimate 或 CSS + View Transitions | GSAP（杀鸡用牛刀） |
+| 布局动画 / 手势 / 进退场编排（React/Vue） | Motion | GSAP（体积更大） |
+| 滚动叙事 / 时间线编排 / 复杂序列 | GSAP + ScrollTrigger（插件按需） | anime.js（编排能力不足） |
+| SVG 路径 / 轻量补间 | anime.js | Lottie（需设计师产出） |
+| 设计师交付 AE 动画 | Lottie（`.lottie` 优先，首屏禁用） | 手写 CSS 复刻（不可维护） |
+| 3–5 个常规统计图 | Chart.js 或 ECharts 按需 | D3（学习成本远超收益） |
+| 看板 / 大屏 / 多图联动 / 中文场景 | ECharts（按需引入 + dispose + ResizeObserver） | Chart.js（联动与大屏弱） |
+| 非标准图形 / 定制可视化 | D3 或 Observable Plot | ECharts（定制受限） |
+| 百万点时序 / 监控曲线 | uPlot | ECharts（大数据量吃力） |
+| 常规列表（< 500 行/页，列 < 15） | 组件库自带 Table + 分页 | DataTables / AG Grid（过度） |
+| 服务端处理 + 固定列 + 列显隐 + 导出 + 行内编辑，要开箱即用 | DataTables.net（路由懒加载） | TanStack（需自写 UI，工期不足时） |
+| 现代栈 + 完全自控 UI 的复杂表格 | TanStack Table + @tanstack/virtual | DataTables（jQuery 生态、样式耦合） |
+| 万行以上 / 树表 / Vue 中后台求快 | vxe-table，或 组件库 Table + 虚拟滚动 | 无虚拟滚动的裸渲染 |
+| Excel 式录入 / 透视 / 百万行编辑 | AG Grid（先核社区版是否够用）或 Handsontable（先核授权与预算） | 自研（工期与稳定性双输） |
+| 纯 CSS、不引 JS 框架的轻量站/文档站 | Cirrus UI / Bulma / Pico.css | 重组件库（组件与 JS 一起进包） |
+| 需无障碍且完全定制视觉 | Radix / Headless UI / Ark UI + 自研样式 | 带视觉的组件库深改主题 |
+| 语言层问题（弹窗/浮层/校验/格式化/深拷贝/滚动） | 先查 MDN 原生方案（`<dialog>`、Popover API、`inert`、`structuredClone`、`Intl`） | 引库（原生已覆盖即负债） |
+| 大数据导出 Excel（> 5 万行） | 后端生成，前端只触发下载 | 前端 xlsx 拼装（内存与卡顿） |
+| 中国地图 / 地理可视化 | 高德/百度/腾讯官方底图，遵守审图号与边界规范 | 境外底图绘制中国版图（合规红线） |

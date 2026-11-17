@@ -50,7 +50,7 @@
 
 ### 4. CDN
 - [P1] 静态资源全部托管 CDN
-- [P2] CDN 域名拆分，突破同域名并发限制
+- [P2] CDN 域名拆分**仅限 HTTP/1.1 环境**（突破同域名 6 连接上限）；**HTTP/2 / HTTP/3 下禁止域名分片与雪碧图**——多路复用已解决并发，分片反而增加连接与 TLS 开销（与 `knowledge-system.md` §四.2 一致）
 - [P1] CDN 缓存刷新策略，版本更新自动刷新
 
 ### 5. 懒加载
@@ -97,6 +97,8 @@
 - [P0] addEventListener 组件销毁 removeEventListener
 - [P0] window 全局事件（resize/scroll/keydown）页面离开注销
 - [P0] 第三方实例销毁：ECharts / 地图 / 播放器组件销毁时 destroy
+- [P0] WebGL / 3D 场景销毁：`renderer.dispose()`、geometry / material / texture 逐一 dispose、取消 requestAnimationFrame、移除 canvas
+- [P1] 动画库实例销毁：GSAP timeline `kill()`、Motion 卸载、观察器（IntersectionObserver / ResizeObserver）断开
 - [P1] 避免全局变量持续追加大数组/大对象
 - [P1] 事件总线订阅组件离开取消订阅
 - [P1] 闭包引用大对象导致无法 GC 的排查
@@ -125,6 +127,8 @@
 - [P0] 敏感信息禁止控制台打印
 - [P1] Nginx 关闭 autoindex 防目录浏览
 - [P1] 输入过滤、特殊字符校验
+- [P0] 地图合规：涉及中国地图必须使用合规底图与审图号，边界与九段线不得简化或缺失，禁止用境外底图绘制中国版图
+- [P1] 第三方脚本与 CDN 资源加 SRI 完整性校验；非必要不引第三方统计脚本
 
 ## 八、监控、告警、容灾
 

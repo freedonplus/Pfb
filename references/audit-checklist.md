@@ -14,6 +14,9 @@
 - 组件库按需引入：无全量 import（如 `import ElementPlus from 'element-plus'` 后 `app.use` 全注册）
 - 产物 hash 命名：build 后文件名含内容 hash
 - sourceMap：生产构建不输出或不上传（检查 build 配置）
+- 重库懒加载：图表 / 表格 / 3D / 编辑器 / 地图类依赖是否动态 `import()`，是否进首屏主包（对照 `library-catalog.md` §一 体积闸）
+- 依赖许可：是否存在 GPL/AGPL 依赖被闭源商用；付费库（AG Grid 企业版、Handsontable、Highcharts）是否有授权记录
+- 原生替代检查：是否存在"引库做原生已支持的事"（如用 popup 库而非 Popover API、用 moment 而非 `Intl`），有则记 P2 并给替代
 
 ### G2 资源缓存（查部署配置 nginx/对象存储/CDN）
 - `index.html` 不强缓存（no-cache / max-age=0）

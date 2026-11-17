@@ -3,6 +3,10 @@
 用途：阶段 2 撰写「UI 组件复用与设计系统」章节时加载；审核含自定义组件/动效的项目时按标题 grep。
 定位：风格选型管「长什么样」，组件库管「能用」，uiverse 模式管「好看」，现代 CSS 管「怎么写才稳」——四层递进，不是互斥选项。
 
+**权威优先级（硬规则）**：HTML/CSS/JS 的任何实现问题，先查 **MDN 中文（developer.mozilla.org/zh-CN）**，其次 WHATWG/W3C 规范，再次库官方文档，最后才是博客与经验文章。MDN 记录了被库包装掉的大量原生能力（`<dialog>`、Popover API、`inert`、`@starting-style`、`field-sizing`、View Transitions、`structuredClone` 等，完整清单见 `library-catalog.md` §二）——**原生能做的不要引库**，方案书里须写明浏览器基线要求。
+
+**动效与 3D 的库级选型**（GSAP / Motion / anime.js / Lottie / Three.js / model-viewer 的体积与适用边界）见 `library-catalog.md` §A、§B；本文件只管"视觉与性能是否合规"，不管"选哪个库"。
+
 ---
 
 ## 一、组件复用三层决策（写入方案书必带「选择 + 理由 + 否决项」）
@@ -24,13 +28,13 @@
 ## 二、风格选型映射（StyleKit 151 风格体系）
 
 素材来源：stylekit.top/zh/styles（151 种设计风格目录，每种附适用场景与视觉标签）。方案书先定主风格，再谈组件；风格只允许从映射表选，不得凭感觉造词。
-提问阶段（interview.md 第 3 轮）按项目类型给 3~4 个候选风格让用户选，选择 + 理由 + 否决项写入方案书。
+提问阶段（interview.md 第 5 轮）按项目类型给 3~4 个候选风格让用户选，选择 + 理由 + 否决项写入方案书。
 
 ### 按项目类型的推荐风格
 
 | 项目类型 | 推荐主风格（按优先级） | 视觉特征要点 | 技术要点 |
 | --- | --- | --- | --- |
-| 后台管理系统 | Corporate Clean（企业简洁风）> Notion 风格 > Dark Mode | 高可读性、一致性、低装饰 | 成熟组件库默认样式微调即可，L3 抄改组件 ≤ 5 个 |
+| 后台管理系统 | Corporate Clean（企业简洁风）> Notion 风格 > Dark Mode | 高可读性、一致性、低装饰 | 成熟组件库默认样式微调即可；L3 抄改组件默认 ≤ 5 个，**若用户要求品牌化或效率型微交互可放宽，但须逐个过 §一 准入门槛**；表格与图表能力按 `library-catalog.md` D/C 组独立选型 |
 | Dashboard / 数据工具 | macOS Vibrancy > Dark Mode > Corporate Clean | 深灰多层面板、克制 backdrop-blur | glass 预算集中给图表卡片 |
 | SaaS / B2B 官网 | Modern Gradient > Soft UI > Apple 风 | 渐变背景、玻璃卡片、柔和阴影 | L3 组件 10~20 个，CTA 用发光边框 |
 | 开发者工具 / 技术产品 | Dark Mode > Stripe 风 > macOS Vibrancy | 低对比层次、代码感配色、渐变网格 | 代码块与 mono 字体是第一公民 |
@@ -96,6 +100,9 @@
 | `will-change` 常驻禁止 | 内存占用 + 层数爆炸；仅动画期间挂 |
 | 无限循环动画非可视区必须暂停 | `IntersectionObserver` 进出视口启停（离开视口 `animation-play-state: paused`） |
 | 用户开启「减弱动态效果」时关闭装饰动画 | `@media (prefers-reduced-motion: reduce)` 全局降级，无障碍硬要求 |
+| 3D / WebGL 场景禁止进首屏主包 | 必须动态 `import()` + 加载占位 + 加载失败/低端机降级静态图；Canvas 尺寸随容器变化须用 `ResizeObserver` |
+| 动画库实例禁止逐项挂载于长列表 | 每项一个 GSAP/Motion 实例会造成内存与 GC 压力；用统一时间线或视口内按需创建、离场销毁 |
+| 滚动驱动动画优先 `animation-timeline` | 纯 CSS 实现，免 JS 逐帧监听；不支持时降级 IntersectionObserver + class |
 
 > 本红线只管纯 CSS 动效；动画库（GSAP / Motion / Three.js）的引入条件与体积红线见 `component-libraries.md` §三。
 

@@ -1,7 +1,8 @@
 # 组件库选型目录 + 设计资源入口
 
-用途：阶段 1 第 3 轮组件库提问、阶段 2 撰写技术栈与「UI 组件复用与设计系统」章节时加载；审核时核验选型合理性。
+用途：阶段 1 第 5 轮组件库提问、阶段 2 撰写技术栈与「UI 组件复用与设计系统」章节时加载；审核时核验选型合理性。
 数据基准：2026-11 整理（star 为参考值，选型时以实时数据与最近发版时间现场核查）。
+边界：本文件只管"整套 UI 组件库与设计资源入口"；**图表、数据表格、3D、动画、编辑器、地图等能力库见 `library-catalog.md`**，此处只给索引，不重复维护体积与坑。
 
 ---
 
@@ -82,6 +83,23 @@
 
 ---
 
+## 二之补 · 非组件类能力库索引（详见 library-catalog.md）
+
+组件库解决"页面骨架"，但真实项目的能力缺口通常在下面几类。**这四类是方案书里最常被漏掉的，阶段 1.5 必须逐项确认。**
+
+| 能力 | 首选 | 备选 | 何时不该引组件库自带方案 | 详见 |
+| --- | --- | --- | --- | --- |
+| 数据表格 | DataTables.net（开箱全能）/ TanStack Table（headless 定制） | AG Grid（企业级，付费评估）/ vxe-table（Vue）/ 组件库自带 Table + 虚拟滚动 | 需要服务端处理、固定列、列显隐、导出、万行虚拟滚动时，组件库自带表格通常不够 | `library-catalog.md` §D |
+| 图表 | ECharts（看板/大屏，中文场景） | Chart.js（轻量常规图）/ D3（定制）/ uPlot（百万点时序） | 组件库的 Chart 封装能力最弱，几乎都要另选 | §C |
+| 3D / WebGL | `<model-viewer>`（仅展示模型） | Three.js（自建场景）/ PixiJS（2D 粒子）/ Rive（交互矢量） | 组件库不含 3D，必须单独决策 | §A |
+| 动画编排 | 纯 CSS（默认） | Motion（布局/手势）/ GSAP（时间线/滚动叙事）/ anime.js（SVG 轻量） | 组件库自带 transition 只够 hover 级 | §B |
+| 纯 CSS 框架（不引 JS） | Cirrus UI（cirrus-ui.netlify.app） | Bulma / Pico.css / Tailwind + DaisyUI | 静态站、文档站、轻后台：引 JS 组件库属于过度 | §E |
+| Headless 可及性原语 | Radix UI（React）/ Ark UI（多框架） | Headless UI / shadcn-ui（复制进项目） | 要完全自控视觉又要无障碍时，带视觉的组件库是负担 | §E |
+| 富文本 / 代码编辑 | Tiptap（富文本）/ CodeMirror 6（代码） | Lexical / wangEditor / Monaco（重） | 组件库不含，需独立选型 | §G |
+| 地图 | 高德 JS API（国内，需合规底图） | MapLibre GL / Leaflet | 组件库不含；中国地图有合规红线 | §H |
+
+---
+
 ## 三、设计资源入口总表（方案书引用素材时逐类取用）
 
 ### 总目录：designeer.org（422 个精选工具，含 132 位 design engineer 名录）
@@ -91,15 +109,16 @@
 | Components · 组件库 | 109 | shadcn、ForgeUI、RewampUI、uiverse.io | L3 抄改组件来源（过 ui-patterns §一准入门槛） |
 | Components · 动画库 | 11 | GSAP、Motion（motion.dev）、Remotion | 见下方「动画库选型红线」 |
 | Dev Tools · Agents & MCP | 35 | Claude Code、Cursor 等 | AI 辅助开发工具链推荐，与方案 AI 章节衔接 |
-| Design Assets · Icons | 30 | Lucide、Phosphor、iconify | 图标库选型（interview.md 第 3 轮） |
+| Design Assets · Icons | 30 | Lucide、Phosphor、iconify | 图标库选型（interview.md 第 5 轮） |
 | Design Assets · Fonts/Color/Shaders | 19 | Fontshare、OKLCH、color.review、Book of Shaders、Three.js / React Three Fiber | 字体子集化、取色器、WebGL 特效进阶 |
 | Utilities | 61 | SVGOMG、tldraw、Excalidraw | 工具类按需 |
 
 ### 动画库选型红线
-- 进 bundle 前评估体积：GSAP 按需 `registerPlugin`，Motion 优先（体积小、API 现代）。
-- 动画库只做 CSS 做不了的（时间线编排、物理弹簧、滚动编排）；hover/过渡一律纯 CSS。
-- 长列表内动画项禁止逐项挂动画库实例（内存与 GC 压力）；离开视口销毁或复用。
-- WebGL/Three.js 仅用于首屏 hero 级场景，必须懒加载 + 低端机降级静态图（对齐 advanced-checklist 精神）。
+- **先问 CSS 能不能做**：hover、过渡、简单入场一律纯 CSS，0 字节；引库只解决"CSS 做不到"的部分（时间线编排、物理弹簧、滚动叙事、SVG 路径）。
+- 进 bundle 前评估体积：GSAP 必须 `registerPlugin` 按需（core ≈ 23KB gzip）；Motion ≈ 18KB 且 API 更现代，多数场景优先 Motion；anime.js ≈ 10KB 适合轻量场景。
+- 动画库只做编排，不做"逐项实例化"：长列表内禁止每行一个动画实例，离开视口销毁或复用（见 ui-patterns §四）。
+- WebGL / Three.js 只用于首屏 hero 级场景，必须懒加载 + 低端机降级静态图；**纯模型展示优先 `<model-viewer>`（≈90KB），不要上 Three.js**。
+- 许可证现场核验：GSAP 随版本调整过授权方式，商业项目落地前核对官方 pricing/license 页；Lottie/Rive 的运行时与编辑器授权范围不同。
 
 ### 模板站：mobanwang.com（10000+ HTML/Bootstrap5 模板）
 - 适用场景：仅需展示型企业官网、无交互后台、预算极小时——直接选模板改造，方案书走「轻量路线」。

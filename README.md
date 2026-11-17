@@ -1,6 +1,8 @@
 # ProdFrontendBlueprint · 生产级前端蓝图
 
 > 一个会先问你几轮、再给出可落地生产级前端方案的 Skill。不是技术栈清单生成器，也不是脚手架生成器。
+>
+> **v1.2**：新增 12 类能力池全量盘点（3D / 动画 / 图表 / 数据表格 / 组件库 / 编辑器 / 地图…），写方案前一次性列全由你勾选；引入 MDN 原生能力优先清单；提问扩至 8 轮并修掉条件题混排。
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Skill](https://img.shields.io/badge/WorkBuddy-Skill-8b5cf6.svg)](#安装)
@@ -34,7 +36,7 @@
 | --- | --- | --- |
 | **A. 已有项目 · 没按本技能设计** | 有代码，但找不到本技能产出的方案书 / 目录骨架文档 | 差距检查 → 输出「结论先行」的差距报告，**改不改由你决定**，不动你的代码 |
 | **B. 已有项目 · 本技能产出** | 存在方案书（含目录骨架、上线清单章节） | 审核模式：按分组清单逐项出报告，分阻断 / 建议 / 记录三级 |
-| **C. 无项目 · 计划新建** | 只有一个想法 | 分轮提问 → 方案书 + 目录骨架 → 检阅迭代 |
+| **C. 无项目 · 计划新建** | 只有一个想法 | 分轮提问 → **能力池全量盘点** → 方案书 + 目录骨架 → 检阅迭代 |
 
 A 与 B 的分界是**有没有基线**：有基线才能说「你没按方案做」，没基线只能说「这里是差距」。审核报告第一段永远是结论（通过率、阻断项、能不能上线），明细在后。
 
@@ -42,16 +44,47 @@ A 与 B 的分界是**有没有基线**：有基线才能说「你没按方案�
 
 ## 提问覆盖什么
 
-`references/interview.md` 共 6 轮，每轮最多 4 题，按平台与前置答案动态裁剪：
+`references/interview.md` 共 8 轮，每轮最多 4 题。**条件题单独成轮、按上一轮答案动态生成**——不会出现"还没选平台就被问 App 技术栈"的错位：
 
-1. **平台与终端** —— 网站 / H5 / 原生 App / 小程序 / 桌面端，是否要 PC 与移动双适配
-2. **语言与框架** —— JS 还是 TS；Vue / React / uni-app x / Flutter / Electron / Tauri
-3. **组件库与样式** —— UI 库选型（按 `component-libraries.md` 目录与活跃度三门槛）、设计风格选型（StyleKit 映射，按项目类型给 3~4 个候选）、是否允许 uiverse 式自研视觉组件、CSS 方案与现代 CSS 特性
-4. **规模与流量模型** —— 内部系统还是公网 C 端、日活量级、是否有大促峰值
-5. **渲染与数据层** —— CSR / SSR / SSG、状态管理、请求层与缓存策略
-6. **工程化与发布** —— 构建工具、包管理、CI、部署形态、灰度与回滚
+1. **平台** —— 网站 / H5 / 小程序 / 移动 App / 桌面端，项目性质，是否已有代码（只问平台，不放条件题）
+2. **平台分支** —— 按第 1 轮结果只出相关一题：App 技术栈 / Web 目标环境 / 小程序类型 / 桌面方案，外加是否多端一套代码
+3. **语言与框架** —— JS 还是 TS；Vue / React / Svelte；构建工具；包管理与工作区
+4. **业务形态、数据压力与权限** —— 流量模型、**权限模型（仅登录态 / RBAC / 按钮级 / 多租户 / 对接 SSO）**、**表格与数据规模（常规 / 复杂表格 / 万行 / Excel 式）**、**可视化需求（统计图 / 看板 / 大屏 / 定制）**
+5. **UI 与组件策略** —— 组件库、设计风格（StyleKit 映射）、**动效与交互密度（克制 / 标准 / 丰富 / 3D）**、主题与图标
+6. **渲染与数据层** —— CSR / SSR / SSG、状态管理、请求层、国际化
+7. **交付约束** —— **接口就绪度（决定 mock 与契约先行）**、**设计资源**、**存量约束（旧栈 / 旧路由 / 旧浏览器）**、**团队与交付对象**
+8. **工程化与发布** —— 质量门禁、测试范围、CI/CD、监控
 
-结束时输出一张「决策回执表」（问题 → 你的选择 → 推导结论）供确认，避免方案写完才发现理解偏了。
+结束时输出两张回执表：**决策回执**（问题 → 你的选择 → 推导结论）+ **能力选型回执**（能力域 → 是否引入 → 库 → 加载方式 → 体积预算 → 否决项），确认后才写方案。
+
+---
+
+## 能力池：一次性全量呈现（v1.2 新增）
+
+同类技能最容易犯的错，是按项目类型替你砍掉候选——"这是后台，不用动画库"、"内部系统跳过 SSR 那轮"。这个假设是错的：后台恰恰是数据表格（DataTables / TanStack Table / vxe-table）与图表（ECharts / Chart.js）用得最重的地方，效率型微交互也是实打实的需求。
+
+所以 v1.2 增加 `references/library-catalog.md`，在写方案书前**强制**走一遍全量盘点：
+
+| 组 | 内容 | 代表方案 |
+| --- | --- | --- |
+| A 3D / WebGL | 三维展示与图形渲染 | Three.js、`<model-viewer>`、PixiJS、Babylon、Rive、OGL |
+| B 动画编排 | 转场、滚动叙事、微交互 | 纯 CSS、Motion、GSAP、anime.js、Lottie、AutoAnimate、Lenis |
+| C 图表 | 看板、大屏、定制可视化 | ECharts、Chart.js、D3、uPlot、AntV、deck.gl |
+| D 数据表格 | 服务端处理、虚拟滚动、Excel 式 | DataTables.net、TanStack Table、AG Grid、vxe-table、Handsontable |
+| E 组件库 / CSS | 整套 UI 或纯 CSS 框架 | Cirrus UI、Bulma、Pico、Tailwind+DaisyUI、Radix/Ark（headless） |
+| F 图标字体 | 图标与字体资源 | iconify、Lucide、Phosphor、IconPark、Fontshare |
+| G 编辑器 | 富文本、代码、白板、公式 | Tiptap、Lexical、CodeMirror 6、Monaco、KaTeX、tldraw |
+| H 地图 | 地理与三维地球 | 高德 / 百度 / 腾讯（含合规红线）、MapLibre、Leaflet、Cesium |
+| I 文件媒体 | 上传、图片、PDF、Excel、音视频 | Uppy、Cropper.js、PDF.js、SheetJS、hls.js |
+| J 表单交互 | 校验、拖拽、虚拟列表、日期 | zod/valibot、react-hook-form、dnd-kit、@tanstack/virtual、Day.js |
+| K 状态请求 | 数据请求、全局状态、实时、离线 | TanStack Query、Pinia、Zustand、XState、Dexie |
+| L 工程监控 | 构建、测试、Lint、体积、监控 | Vite/Rspack、Vitest、Playwright、MSW、Biome、Sentry |
+
+每条都带**官方地址 / 体积量级 / 何时值得引入 / 已知坑与红线**，并按四道闸（体积 · 许可证 · 活跃度 · 平台兼容）判定。三层机制保证不失控：
+
+- **全量呈现**：12 组先给总览表，再逐组问「按默认 / 我自选 / 不需要」，不允许用"通常不需要"代替询问。
+- **原生优先**：`library-catalog.md` §二 列了 20 项"以前得引库、现在原生就行"的能力——`<dialog>`、Popover API、`inert`、`structuredClone`、`Intl`、`AbortSignal.timeout`、`content-visibility`、View Transitions 等，**MDN 中文（developer.mozilla.org/zh-CN）为第一权威**，原生能做的不引库。
+- **反向挑战**：你的选择与业务冲突时（首屏指标严格却要上 Three.js 大场景），技能会当场算体积与降级成本，而不是沉默执行。
 
 ---
 
@@ -102,10 +135,11 @@ A 与 B 的分界是**有没有基线**：有基线才能说「你没按方案�
 
 ## 输出长什么样
 
-方案书章节骨架见 `references/plan-template.md`，必含：
+方案书章节骨架见 `references/plan-template.md`（完整版 19 章 / 精简版 7 章），必含：
 
-- 技术选型与否决项（为什么不是另一套）
+- 技术选型与否决项（为什么不是另一套），版本号只写下限并附**核验日期**
 - **目录结构骨架**（目录树 + 每层职责，可直接落地）
+- **依赖与能力选型**（阶段 1.5 回执表：能力域 / 库 / 体积 / 加载方式 / 否决项 + 原生能力基线）
 - 数据流与状态管理、请求层与错误处理策略
 - UI 组件复用与设计系统（主风格选型、三层复用决策、token 层、抄改组件清单）
 - AI 前端集成方案（仅 AI 项目：流式渲染、会话状态机、工具调用展示、上下文管理）
@@ -145,17 +179,18 @@ Windows 对应 `C:\Users\<你>\.workbuddy\skills\prod-frontend-blueprint`。目�
 
 ```
 ProdFrontendBlueprint/
-├── SKILL.md                        # 入口：核心原则、场景判定、六阶段工作流
+├── SKILL.md                        # 入口：核心原则、场景判定、阶段 0–4 工作流（含 1.5 能力盘点）
 ├── README.md
 ├── LICENSE                          # Apache-2.0
 └── references/
-    ├── interview.md                 # 分轮提问脚本（6 轮）
-    ├── decision-matrix.md           # 选择 → 结论推导规则（13 组）
+    ├── interview.md                 # 分轮提问脚本（8 轮 + 能力盘点轮）
+    ├── library-catalog.md           # 12 类能力池 + MDN 原生能力清单 + 四道准入闸（v1.2）
+    ├── decision-matrix.md           # 选择 → 结论推导规则（14 组，含能力池选型）
     ├── knowledge-system.md          # 大厂高频考点 → 架构决策映射（含 AI 前端 §七）
     ├── ui-patterns.md               # 风格选型（StyleKit）+ 组件复用三层 + 现代 CSS
-    ├── component-libraries.md       # 组件库目录 + 设计资源入口 + 动画库红线
-    ├── plan-template.md             # 方案书模板（18 章，含 UI 与 AI 前端章节）
-    ├── production-checklist.md      # 主清单（十大板块，P0/P1/P2）
+    ├── component-libraries.md       # 组件库目录 + 非组件能力库索引 + 设计资源入口 + 动画库红线
+    ├── plan-template.md             # 方案书模板（19 章完整版 / 7 章精简版）
+    ├── production-checklist.md      # 主清单（十一板块，P0/P1/P2）
     ├── advanced-checklist.md        # 高阶清单（C 端大流量专用）
     ├── audit-checklist.md           # 审核清单（G1–G10 + P-AI）+ 结论先行报告模板
     └── stacks/                      # vue3 / react / uniapp-x / miniprogram / desktop
